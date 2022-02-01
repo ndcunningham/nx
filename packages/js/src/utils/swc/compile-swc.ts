@@ -5,7 +5,7 @@ import { concatMap, map } from 'rxjs/operators';
 import { NormalizedSwcExecutorOptions } from '../schema';
 import { printDiagnostics } from '../typescript/print-diagnostics';
 import {
-  runTypeCheck,
+  validateAndGenerateTypes,
   runTypeCheckWatch,
   TypeCheckOptions,
 } from '../typescript/run-type-check';
@@ -111,7 +111,7 @@ export function compileSwc(
       };
     }
 
-    runTypeCheck(typeCheckOptions).then(({ errors, warnings }) => {
+    validateAndGenerateTypes(typeCheckOptions).then(({ errors, warnings }) => {
       const hasErrors = errors.length > 0;
       if (hasErrors) {
         void printDiagnostics(errors, warnings);

@@ -63,7 +63,7 @@ describe('Build React libraries and apps', () => {
       );
     };
 
-    runCLI(`generate @nrwl/react:app ${app} `);
+    runCLI(`generate @nrwl/react:app ${app}`);
 
     // generate buildable libs
     runCLI(
@@ -73,7 +73,7 @@ describe('Build React libraries and apps', () => {
       `generate @nrwl/react:library ${childLib} --buildable --importPath=@${proj}/${childLib} --no-interactive `
     );
     runCLI(
-      `generate @nrwl/react:library ${childLib2} --buildable --importPath=@${proj}/${childLib2} --no-interactive `
+      `generate @nrwl/react:library ${childLib2} --compiler=swc --buildable --importPath=@${proj}/${childLib2} --no-interactive `
     );
 
     createDep(parentLib, [childLib, childLib2]);
@@ -112,6 +112,11 @@ describe('Build React libraries and apps', () => {
 
       checkFilesExist(`dist/libs/${childLib}/assets/hello.txt`);
       checkFilesExist(`dist/libs/${childLib2}/README.md`);
+
+      /*
+       * Types
+       */
+      checkFilesExist(`dist/libs/${childLib2}/lib/${childLib2}.d.ts`);
 
       /*
        * 2. With dependencies

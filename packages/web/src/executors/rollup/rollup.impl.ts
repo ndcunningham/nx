@@ -70,6 +70,11 @@ export default async function* rollupExecutor(
     context.root,
     sourceRoot
   );
+
+  // Delete output path before bundling
+  if (options.deleteOutputPath) {
+    deleteOutputDir(context.root, options.outputPath);
+  }
   const packageJson = readJsonFile(options.project);
 
   const npmDeps = (projectGraph.dependencies[context.projectName] ?? [])
@@ -91,6 +96,7 @@ export default async function* rollupExecutor(
         workspaceRoot: context.root,
         projectRoot: options.projectRoot,
         tsconfig: options.tsConfig,
+        outputPath: options.outputPath,
       });
     } catch {
       return { success: false };
@@ -125,11 +131,6 @@ export default async function* rollupExecutor(
     );
   } else {
     logger.info(`Bundling ${context.projectName}...`);
-
-    // Delete output path before bundling
-    if (options.deleteOutputPath) {
-      deleteOutputDir(context.root, options.outputPath);
-    }
 
     const start = process.hrtime.bigint();
 

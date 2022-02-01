@@ -75,7 +75,7 @@ export async function runTypeCheckWatch(
   };
 }
 
-export async function runTypeCheck(
+export async function validateAndGenerateTypes(
   options: TypeCheckOptions
 ): Promise<TypeCheckResult> {
   const { ts, workspaceRoot, cacheDir, config, compilerOptions } =
