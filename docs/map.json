@@ -645,7 +645,7 @@
           },
           {
             "name": "library-secondary-entry-point generator",
-            "id": "library",
+            "id": "library-secondary-entry-point",
             "file": "generated/api-angular/generators/library-secondary-entry-point"
           },
           {
@@ -902,21 +902,16 @@
             "id": "migrate-stories-to-6-2",
             "file": "generated/api-storybook/generators/migrate-stories-to-6-2"
           },
+
           {
-            "id": "executors",
-            "name": "Executors / Builders",
-            "itemList": [
-              {
-                "name": "build",
-                "id": "build",
-                "file": "generated/api-storybook/executors/build"
-              },
-              {
-                "name": "storybook",
-                "id": "storybook",
-                "file": "generated/api-storybook/executors/storybook"
-              }
-            ]
+            "name": "Executors: Build",
+            "id": "executors-build",
+            "file": "generated/api-storybook/executors/build"
+          },
+          {
+            "name": "Executors: Storybook",
+            "id": "executors-storybook",
+            "file": "generated/api-storybook/executors/storybook"
           }
         ]
       },
@@ -1356,6 +1351,11 @@
         "name": "Workspace Structure",
         "id": "structure",
         "itemList": [
+          {
+            "name": "Applications and Libraries",
+            "id": "applications-and-libraries",
+            "file": "shared/workspace/applications-and-libraries"
+          },
           {
             "name": "Creating Libraries",
             "id": "creating-libraries",
