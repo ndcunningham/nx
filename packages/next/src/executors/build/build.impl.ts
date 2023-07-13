@@ -53,7 +53,21 @@ export default async function buildExecutor(
   process.env.NX_NEXT_OUTPUT_PATH ??= outputPath;
 
   const args = createCliOptions({ experimentalAppOnly, profile, debug });
-  const command = `npx next build ${args.join(' ')}`;
+  let modulesAvailable = false;
+
+  try {
+    modulesAvailable = Boolean(
+      require.resolve('ts-node') && require.resolve('tsconfig-paths')
+    );
+  } catch (_) {}
+
+  // Support importing workspace libs in next.config.mjs
+  const command = modulesAvailable
+    ? `node -r ts-node -r tsconfig-paths/register ${projectRoot}/tsconfig.json ${
+        process.env.NX_WORKSPACE_ROOT
+      }/node_modules/.bin/next build ${args.join(' ')}`
+    : `npx next build ${args.join(' ')}`;
+
   const execSyncOptions: ExecSyncOptions = {
     stdio: 'inherit',
     encoding: 'utf-8',
