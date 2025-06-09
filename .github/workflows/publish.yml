@@ -23,6 +23,7 @@ env:
   CYPRESS_INSTALL_BINARY: 0
   NODE_VERSION: 20.19.0
   PNPM_VERSION: 10.11.1 # Aligned with root package.json (pnpm/action-setup will helpfully error if out of sync)
+  NVM_VERSION: v0.39.0
 
 jobs:
   # We first need to determine the version we are releasing, and if we need a custom repo or ref to use for the git checkout in subsequent steps.
@@ -42,7 +43,6 @@ jobs:
   #     we should generate an applicable version number within publish-resolve-data.js and use a custom ref of the PR branch name.
   resolve-required-data:
     name: Resolve Required Data
-    if: ${{ github.repository_owner == 'nrwl' }}
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.script.outputs.version }}
@@ -70,8 +70,8 @@ jobs:
           check-latest: true
 
       # Ensure that the NPM_TOKEN secret is still valid before wasting any time deriving data or building projects
-      - name: Check NPM Credentials
-        run: npm whoami && echo "NPM credentials are valid" || (echo "NPM credentials are invalid or have expired." && exit 1)
+      # - name: Check NPM Credentials
+        # run: npm whoami && echo "NPM credentials are valid" || (echo "NPM credentials are invalid or have expired." && exit 1)
 
       - name: Resolve and set checkout and version data to use for release
         id: script
@@ -116,7 +116,6 @@ jobs:
 
   build:
     needs: [ resolve-required-data ]
-    if: ${{ github.repository_owner == 'nrwl' }}
     env:
       NODE_VERSION: 20.19.0
     strategy:
@@ -142,30 +141,32 @@ jobs:
           - host: ubuntu-latest
             target: x86_64-unknown-linux-gnu
             docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian
-            build: |-
-              set -e &&
-              npm i -g n &&
-              n ${NODE_VERSION} &&
-              export PATH="/usr/local/n/versions/node/${NODE_VERSION}/bin:$PATH" &&
-              node --version &&
-              npm i -g pnpm@10.11.1 --force &&
-              pnpm --version &&
-              pnpm install --frozen-lockfile &&
-              rustup target add aarch64-unknown-linux-gnu &&
+            build: |
+              set -e
+              apt-get update
+              curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+              apt-get install -y nodejs
+              node --version
+              npm i -g pnpm@${PNPM_VERSION} --force
+              pnpm --version
+              pnpm install --frozen-lockfile
+              rustup target add aarch64-unknown-linux-gnu
               pnpm nx run-many --verbose --target=build-native -- --target=x86_64-unknown-linux-gnu
           - host: ubuntu-latest
             target: x86_64-unknown-linux-musl
             docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine
-            build: |-
-              set -e &&
-              npm i -g n &&
-              n ${NODE_VERSION} &&
-              export PATH="/usr/local/n/versions/node/${NODE_VERSION}/bin:$PATH" &&
-              node --version &&
-              npm i -g pnpm@10.11.1 --force &&
-              pnpm --version &&
-              pnpm install --frozen-lockfile &&
-              rustup target add x86_64-unknown-linux-musl &&
+            build: |
+              set -e
+              echo "https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories
+              apk update
+              apk add --no-cache nodejs npm
+              which node
+              which npm
+              node --version
+              npm i -g pnpm@${PNPM_VERSION} --force
+              pnpm --version
+              pnpm install --frozen-lockfile
+              rustup target add x86_64-unknown-linux-musl
               pnpm nx run-many --verbose --target=build-native -- --target=x86_64-unknown-linux-musl
           - host: macos-13
             target: aarch64-apple-darwin
@@ -181,15 +182,16 @@ jobs:
           - host: ubuntu-latest
             target: aarch64-unknown-linux-gnu
             docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian-aarch64
-            build: |-
-              set -e &&
-              npm i -g n &&
-              n ${NODE_VERSION} &&
-              node --version &&
-              npm i -g pnpm@10.11.1 --force &&
-              pnpm --version &&
-              pnpm install --frozen-lockfile &&
-              rustup target add aarch64-unknown-linux-gnu &&
+            build: |
+              set -e
+              apt-get update
+              curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+              apt-get install -y nodejs
+              node --version
+              npm i -g pnpm@${PNPM_VERSION} --force
+              pnpm --version
+              pnpm install --frozen-lockfile
+              rustup target add aarch64-unknown-linux-gnu
               pnpm nx run-many --verbose --target=build-native -- --target=aarch64-unknown-linux-gnu
           - host: ubuntu-latest
             target: armv7-unknown-linux-gnueabihf
@@ -211,16 +213,18 @@ jobs:
           - host: ubuntu-latest
             target: aarch64-unknown-linux-musl
             docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine
-            build: |-
-              set -e &&
-              npm i -g n &&
-              n ${NODE_VERSION} &&
-              export PATH="/usr/local/n/versions/node/${NODE_VERSION}/bin:$PATH" &&
-              node --version &&
-              rustup target add aarch64-unknown-linux-musl &&
-              npm i -g pnpm@10.11.1 --force &&
-              pnpm --version &&
-              pnpm install --frozen-lockfile &&
+            build: |
+              set -e
+              rustup target add aarch64-unknown-linux-musl
+              echo "https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories
+              apk update
+              apk add --no-cache nodejs npm
+              which node
+              which npm
+              node --version
+              npm i -g pnpm@${PNPM_VERSION} --force
+              pnpm --version
+              pnpm install --frozen-lockfile
               pnpm nx run-many --verbose --target=build-native -- --target=aarch64-unknown-linux-musl
           - host: windows-latest
             target: aarch64-pc-windows-msvc
@@ -317,7 +321,6 @@ jobs:
 
   build-freebsd:
     needs: [ resolve-required-data ]
-    if: ${{ github.repository_owner == 'nrwl' }}
     runs-on: ubuntu-latest
     name: Build FreeBSD
     timeout-minutes: 45
@@ -335,11 +338,13 @@ jobs:
           RUSTUP_IO_THREADS: 1
           NX_PREFER_TS_NODE: true
           PLAYWRIGHT_BROWSERS_PATH: 0
+          NODE_VERSION: 20.19.0
+          NVM_VERSION: v0.39.0
         with:
           operating_system: freebsd
           version: '14.0'
           architecture: x86-64
-          environment_variables: DEBUG RUSTUP_IO_THREADS CI NX_PREFER_TS_NODE PLAYWRIGHT_BROWSERS_PATH
+          environment_variables: DEBUG RUSTUP_IO_THREADS CI NX_PREFER_TS_NODE PLAYWRIGHT_BROWSERS_PATH NODE_VERSION NVM_VERSION
           shell: bash
           run: |
             env
@@ -488,3 +493,4 @@ jobs:
               issue_number: ${{ github.event.inputs.pr }},
               body: message
             });
+            
