@@ -156,25 +156,26 @@ jobs:
             target: x86_64-unknown-linux-musl
             docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine
             build: |
-              set -e
-              echo "https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories
-              apk add --no-cache curl xz
+              bash -c "
+                set -e
+                echo 'https://dl-cdn.alpinelinux.org/alpine/edge/community' >> /etc/apk/repositories
+                apk add --no-cache curl xz
             
-              curl -fsSL https://nodejs.org/dist/v20.19.0/node-v20.19.0-linux-x64.tar.xz -o node.tar.xz
-              tar -xJf node.tar.xz
-              mv node-v20.19.0-linux-x64 /usr/local/node
+                curl -fsSL https://nodejs.org/dist/v20.19.0/node-v20.19.0-linux-x64.tar.xz -o node.tar.xz
+                tar -xJf node.tar.xz
+                mv node-v20.19.0-linux-x64 /usr/local/node
             
-              # Ensure Node 20 is used
-              export PATH="/usr/local/node/bin:$PATH"
+                export PATH=\"/usr/local/node/bin:\$PATH\"
             
-              node -v
-              npm -v
+                echo NODE version: \$(node -v)
+                echo NPM version: \$(npm -v)
             
-              npm i -g pnpm@${PNPM_VERSION} --force
-              pnpm --version
-              pnpm install --frozen-lockfile
-              rustup target add x86_64-unknown-linux-musl
-              pnpm nx run-many --verbose --target=build-native -- --target=x86_64-unknown-linux-musl
+                npm i -g pnpm@${PNPM_VERSION} --force
+                pnpm --version
+                pnpm install --frozen-lockfile
+                rustup target add x86_64-unknown-linux-musl
+                pnpm nx run-many --verbose --target=build-native -- --target=x86_64-unknown-linux-musl
+              "
           - host: macos-13
             target: aarch64-apple-darwin
             setup: |-
@@ -221,25 +222,26 @@ jobs:
             target: aarch64-unknown-linux-musl
             docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine
             build: |
-              set -e
-              echo "https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories
-              apk add --no-cache curl xz
+              bash -c "
+                set -e
+                echo 'https://dl-cdn.alpinelinux.org/alpine/edge/community' >> /etc/apk/repositories
+                apk add --no-cache curl xz
             
-              curl -fsSL https://nodejs.org/dist/v20.19.0/node-v20.19.0-linux-x64.tar.xz -o node.tar.xz
-              tar -xJf node.tar.xz
-              mv node-v20.19.0-linux-x64 /usr/local/node
+                curl -fsSL https://nodejs.org/dist/v20.19.0/node-v20.19.0-linux-x64.tar.xz -o node.tar.xz
+                tar -xJf node.tar.xz
+                mv node-v20.19.0-linux-x64 /usr/local/node
             
-              # Ensure Node 20 is used
-              export PATH="/usr/local/node/bin:$PATH"
+                export PATH=\"/usr/local/node/bin:\$PATH\"
             
-              node -v
-              npm -v
+                echo NODE version: \$(node -v)
+                echo NPM version: \$(npm -v)
             
-              npm i -g pnpm@${PNPM_VERSION} --force
-              pnpm --version
-              pnpm install --frozen-lockfile
-              rustup target add x86_64-unknown-linux-musl
-              pnpm nx run-many --verbose --target=build-native -- --target=x86_64-unknown-linux-musl
+                npm i -g pnpm@${PNPM_VERSION} --force
+                pnpm --version
+                pnpm install --frozen-lockfile
+                rustup target add x86_64-unknown-linux-musl
+                pnpm nx run-many --verbose --target=build-native -- --target=x86_64-unknown-linux-musl
+              "
           - host: windows-latest
             target: aarch64-pc-windows-msvc
             setup: |-
