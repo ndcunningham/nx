@@ -145,8 +145,8 @@ jobs:
               set -e
               apt-get update
             
-              curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
-              apt-get install -y nodejs=22.16.0-1nodesource1
+              curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+              apt-get install -y nodejs=20.19.0-1nodesource1
             
               export PATH="/usr/local/bin:$PATH"
               node --version
@@ -168,10 +168,9 @@ jobs:
                 echo 'https://dl-cdn.alpinelinux.org/alpine/edge/community' >> /etc/apk/repositories
                 apk add --no-cache curl xz
             
-                # Download and extract musl-compatible Node.js v22.16.0
-                curl -fsSL https://unofficial-builds.nodejs.org/download/release/v22.16.0/node-v22.16.0-linux-x64-musl.tar.xz -o node.tar.xz
+                curl -fsSL https://unofficial-builds.nodejs.org/download/release/v20.19.0/node-v20.19.0-linux-x64-musl.tar.xz -o node.tar.xz
                 tar -xJf node.tar.xz
-                mv node-v22.16.0-linux-x64-musl /usr/local/node
+                mv node-v20.19.0-linux-x64-musl /usr/local/node
             
                 export PATH=\"/usr/local/node/bin:\$PATH\"
             
@@ -205,8 +204,8 @@ jobs:
               set -e
               apt-get update
             
-              curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
-              apt-get install -y nodejs=22.16.0-1nodesource1
+              curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+              apt-get install -y nodejs=20.19.0-1nodesource1
             
               export PATH="/usr/local/bin:$PATH"
               node --version
@@ -245,10 +244,9 @@ jobs:
                 echo 'https://dl-cdn.alpinelinux.org/alpine/edge/community' >> /etc/apk/repositories
                 apk add --no-cache curl xz
             
-                # Download and extract musl-compatible Node.js v22.16.0
-                curl -fsSL https://unofficial-builds.nodejs.org/download/release/v22.16.0/node-v22.16.0-linux-x64-musl.tar.xz -o node.tar.xz
+                curl -fsSL https://unofficial-builds.nodejs.org/download/release/v20.19.0/node-v20.19.0-linux-x64-musl.tar.xz -o node.tar.xz
                 tar -xJf node.tar.xz
-                mv node-v22.16.0-linux-x64-musl /usr/local/node
+                mv node-v20.19.0-linux-x64-musl /usr/local/node
             
                 export PATH=\"/usr/local/node/bin:\$PATH\"
             
