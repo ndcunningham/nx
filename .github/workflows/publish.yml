@@ -161,9 +161,10 @@ jobs:
                 echo 'https://dl-cdn.alpinelinux.org/alpine/edge/community' >> /etc/apk/repositories
                 apk add --no-cache curl xz
             
-                curl -fsSL https://nodejs.org/dist/v20.19.0/node-v20.19.0-linux-x64.tar.xz -o node.tar.xz
+                # ✅ Download musl-compatible Node.js
+                curl -fsSL https://unofficial-builds.nodejs.org/download/release/v20.19.0/node-v20.19.0-linux-musl-x64.tar.xz -o node.tar.xz
                 tar -xJf node.tar.xz
-                mv node-v20.19.0-linux-x64 /usr/local/node
+                mv node-v20.19.0-linux-musl-x64 /usr/local/node
             
                 export PATH=\"/usr/local/node/bin:\$PATH\"
             
@@ -227,9 +228,10 @@ jobs:
                 echo 'https://dl-cdn.alpinelinux.org/alpine/edge/community' >> /etc/apk/repositories
                 apk add --no-cache curl xz
             
-                curl -fsSL https://nodejs.org/dist/v20.19.0/node-v20.19.0-linux-x64.tar.xz -o node.tar.xz
+                # ✅ Download musl-compatible Node.js
+                curl -fsSL https://unofficial-builds.nodejs.org/download/release/v20.19.0/node-v20.19.0-linux-musl-x64.tar.xz -o node.tar.xz
                 tar -xJf node.tar.xz
-                mv node-v20.19.0-linux-x64 /usr/local/node
+                mv node-v20.19.0-linux-musl-x64 /usr/local/node
             
                 export PATH=\"/usr/local/node/bin:\$PATH\"
             
