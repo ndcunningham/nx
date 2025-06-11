@@ -158,21 +158,25 @@ jobs:
             build: |
               bash -c "
                 set -e
+            
                 echo 'https://dl-cdn.alpinelinux.org/alpine/edge/community' >> /etc/apk/repositories
                 apk add --no-cache curl xz
             
-                # ✅ Download musl-compatible Node.js
-                curl -fsSL https://unofficial-builds.nodejs.org/download/release/v20.19.0/node-v20.19.0-linux-musl-x64.tar.xz -o node.tar.xz
+                # Download and extract musl-compatible Node.js v22.16.0
+                curl -fsSL https://unofficial-builds.nodejs.org/download/release/v22.16.0/node-v22.16.0-linux-x64-musl.tar.xz -o node.tar.xz
                 tar -xJf node.tar.xz
-                mv node-v20.19.0-linux-musl-x64 /usr/local/node
+                mv node-v22.16.0-linux-x64-musl /usr/local/node
             
                 export PATH=\"/usr/local/node/bin:\$PATH\"
             
-                echo NODE version: \$(node -v)
-                echo NPM version: \$(npm -v)
+                echo Node: \$(node -v)
+                echo NPM: \$(npm -v)
             
+                # Install PNPM
                 npm i -g pnpm@${PNPM_VERSION} --force
                 pnpm --version
+            
+                # Install deps and run native build
                 pnpm install --frozen-lockfile
                 rustup target add x86_64-unknown-linux-musl
                 pnpm nx run-many --verbose --target=build-native -- --target=x86_64-unknown-linux-musl
@@ -225,21 +229,25 @@ jobs:
             build: |
               bash -c "
                 set -e
+            
                 echo 'https://dl-cdn.alpinelinux.org/alpine/edge/community' >> /etc/apk/repositories
                 apk add --no-cache curl xz
             
-                # ✅ Download musl-compatible Node.js
-                curl -fsSL https://unofficial-builds.nodejs.org/download/release/v20.19.0/node-v20.19.0-linux-musl-x64.tar.xz -o node.tar.xz
+                # Download and extract musl-compatible Node.js v22.16.0
+                curl -fsSL https://unofficial-builds.nodejs.org/download/release/v22.16.0/node-v22.16.0-linux-x64-musl.tar.xz -o node.tar.xz
                 tar -xJf node.tar.xz
-                mv node-v20.19.0-linux-musl-x64 /usr/local/node
+                mv node-v22.16.0-linux-x64-musl /usr/local/node
             
                 export PATH=\"/usr/local/node/bin:\$PATH\"
             
-                echo NODE version: \$(node -v)
-                echo NPM version: \$(npm -v)
+                echo Node: \$(node -v)
+                echo NPM: \$(npm -v)
             
+                # Install PNPM
                 npm i -g pnpm@${PNPM_VERSION} --force
                 pnpm --version
+            
+                # Install deps and run native build
                 pnpm install --frozen-lockfile
                 rustup target add x86_64-unknown-linux-musl
                 pnpm nx run-many --verbose --target=build-native -- --target=x86_64-unknown-linux-musl
