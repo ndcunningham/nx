@@ -89,7 +89,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           # Check out the latest master branch to get its copy of nx-release.ts
-          repository: nrwl/nx
+          repository: ndcunningham/nx
           ref: master
           path: latest-master-checkout
 
