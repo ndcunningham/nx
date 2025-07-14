@@ -406,6 +406,7 @@ function loadTsConfigPaths(): typeof import('tsconfig-paths') | null {
 }
 
 function warnTsNodeUsage() {
+    console.error(`DEBUG: NX_PREFER_TS_NODE = "${process.env.NX_PREFER_TS_NODE}"`);
   logger.warn(
     stripIndent(`${NX_PREFIX} Falling back to ts-node for local typescript execution. This may be a little slower.
   - To fix this, ensure @swc-node/register and @swc/core have been installed`)
@@ -413,7 +414,6 @@ function warnTsNodeUsage() {
 }
 
 function warnNoTsconfigPaths() {
-    console.error(`DEBUG: NX_PREFER_TS_NODE = "${process.env.NX_PREFER_TS_NODE}"`);
   logger.warn(
     stripIndent(`${NX_PREFIX} Unable to load tsconfig-paths, workspace libraries may be inaccessible.
   - To fix this, install tsconfig-paths with npm/yarn/pnpm`)
