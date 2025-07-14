@@ -147,6 +147,7 @@ export function getTsNodeTranspiler(
 
   const { transpiler, swc } = service.options;
 
+  console.log(`transpiler: ${transpiler} & swc: ${swc} & TS_NODE: ${process.env.NX_PREFER_TS_NODE}`);
   // Don't warn if a faster transpiler is enabled or if ts-node is explicitly preferred
   if (!transpiler && !swc && process.env.NX_PREFER_TS_NODE !== 'true') {
     warnTsNodeUsage();
@@ -406,7 +407,7 @@ function loadTsConfigPaths(): typeof import('tsconfig-paths') | null {
 }
 
 function warnTsNodeUsage() {
-    console.error(`DEBUG: NX_PREFER_TS_NODE = "${process.env.NX_PREFER_TS_NODE}"`);
+  console.error(`DEBUG: NX_PREFER_TS_NODE = "${process.env.NX_PREFER_TS_NODE}"`);
   logger.warn(
     stripIndent(`${NX_PREFIX} Falling back to ts-node for local typescript execution. This may be a little slower.
   - To fix this, ensure @swc-node/register and @swc/core have been installed`)
