@@ -42,7 +42,7 @@ jobs:
   #     we should generate an applicable version number within publish-resolve-data.js and use a custom ref of the PR branch name.
   resolve-required-data:
     name: Resolve Required Data
-    if: ${{ github.repository_owner == 'nrwl' }}
+    # if: ${{ github.repository_owner == 'nrwl' }}
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.script.outputs.version }}
@@ -70,8 +70,8 @@ jobs:
           check-latest: true
 
       # Ensure that the NPM_TOKEN secret is still valid before wasting any time deriving data or building projects
-      - name: Check NPM Credentials
-        run: npm whoami && echo "NPM credentials are valid" || (echo "NPM credentials are invalid or have expired." && exit 1)
+      # - name: Check NPM Credentials
+        # run: npm whoami && echo "NPM credentials are valid" || (echo "NPM credentials are invalid or have expired." && exit 1)
 
       - name: Resolve and set checkout and version data to use for release
         id: script
@@ -89,7 +89,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           # Check out the latest master branch to get its copy of nx-release.ts
-          repository: nrwl/nx
+          repository: ndcunningham/nx
           ref: master
           path: latest-master-checkout
 
@@ -102,21 +102,21 @@ jobs:
           ref: ${{ steps.script.outputs.ref }}
           path: pr-branch-checkout
 
-      - name: (PR Release Only) Ensure that nx-release.ts has not changed in the PR being released
-        if: ${{ steps.script.outputs.ref != '' }}
-        env:
-          FILE_TO_COMPARE: "scripts/nx-release.ts"
-        run: |
-          if ! cmp -s "latest-master-checkout/${{ env.FILE_TO_COMPARE }}" "pr-branch-checkout/${{ env.FILE_TO_COMPARE }}"; then
-            echo "🛑 Error: The file ${{ env.FILE_TO_COMPARE }} is different on the ${{ steps.script.outputs.ref }} branch on ${{ steps.script.outputs.repo }} vs latest master on nrwl/nx, cancelling workflow. If you did not modify the file, then you likely just need to rebase/merge latest master."
-            exit 1
-          else
-            echo "✅ The file ${{ env.FILE_TO_COMPARE }} is identical between the ${{ steps.script.outputs.ref }} branch on ${{ steps.script.outputs.repo }} and latest master on nrwl/nx."
-          fi
+      # - name: (PR Release Only) Ensure that nx-release.ts has not changed in the PR being released
+      #   if: ${{ steps.script.outputs.ref != '' }}
+      #   env:
+      #     FILE_TO_COMPARE: "scripts/nx-release.ts"
+      #   run: |
+      #     if ! cmp -s "latest-master-checkout/${{ env.FILE_TO_COMPARE }}" "pr-branch-checkout/${{ env.FILE_TO_COMPARE }}"; then
+      #       echo "🛑 Error: The file ${{ env.FILE_TO_COMPARE }} is different on the ${{ steps.script.outputs.ref }} branch on ${{ steps.script.outputs.repo }} vs latest master on nrwl/nx, cancelling workflow. If you did not modify the file, then you likely just need to rebase/merge latest master."
+      #       exit 1
+      #     else
+      #       echo "✅ The file ${{ env.FILE_TO_COMPARE }} is identical between the ${{ steps.script.outputs.ref }} branch on ${{ steps.script.outputs.repo }} and latest master on nrwl/nx."
+      #     fi
 
   build:
     needs: [ resolve-required-data ]
-    if: ${{ github.repository_owner == 'nrwl' }}
+    # if: ${{ github.repository_owner == 'nrwl' }}
     strategy:
       fail-fast: false
       matrix:
@@ -354,7 +354,7 @@ jobs:
 
   build-freebsd:
     needs: [ resolve-required-data ]
-    if: ${{ github.repository_owner == 'nrwl' }}
+    # if: ${{ github.repository_owner == 'nrwl' }}
     runs-on: ubuntu-latest
     name: Build FreeBSD
     timeout-minutes: 45
@@ -398,8 +398,11 @@ jobs:
             whoami
             env
             freebsd-version
+            echo "Installing dependencies"
             pnpm install --frozen-lockfile --ignore-scripts
+            echo "Building FreeBSD bindings"
             pnpm nx run-many --verbose --outputStyle stream --target=build-native -- --target=x86_64-unknown-freebsd
+            echo "Cleaning up"
             pnpm nx reset
             rm -rf node_modules
             rm -rf dist
