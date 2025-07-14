@@ -413,6 +413,7 @@ function warnTsNodeUsage() {
 }
 
 function warnNoTsconfigPaths() {
+    console.error(`DEBUG: NX_PREFER_TS_NODE = "${process.env.NX_PREFER_TS_NODE}"`);
   logger.warn(
     stripIndent(`${NX_PREFIX} Unable to load tsconfig-paths, workspace libraries may be inaccessible.
   - To fix this, install tsconfig-paths with npm/yarn/pnpm`)
